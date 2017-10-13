@@ -12,12 +12,8 @@ import java.io.IOException;
  */
 public class ClientVersion {
 
-    Web3j client;
-
     @Autowired
-    public ClientVersion(Web3j client) {
-        this.client = client;
-    }
+    private Web3j client;
 
     @PostConstruct
     public void getTheVersion() {

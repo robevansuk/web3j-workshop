@@ -4,6 +4,8 @@ package uk.robevans;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import uk.robevans.config.ApplicationConfiguration;
+import uk.robevans.version.ClientVersion;
+import uk.robevans.wallet.SendEther;
 
 import java.io.IOException;
 

@@ -1,6 +1,0 @@
-ethereum:
-  networkUrl: "http://127.0.0.1:8545"
-  wallet:
-    dir: "~/Library/Ethereum/testnet/keystore/UTC--2017-10-12T12-31-09.995964000Z--a6d825d0b7871c659e3b6a45c92617f6314d1d0e.json"
-    password: "something"
-    address: "0xa6d825d0b7871c659e3b6a45c92617f6314d1d0e"

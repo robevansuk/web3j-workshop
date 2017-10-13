@@ -1,22 +1,27 @@
 package uk.robevans.wallet;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionTimeoutException;
+import org.web3j.tx.*;
+import org.web3j.utils.Convert;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.Optional.empty;
-import static org.web3j.tx.Transfer.sendFundsAsync;
+import static org.web3j.tx.Contract.GAS_LIMIT;
+import static org.web3j.tx.ManagedTransaction.*;
+import static org.web3j.utils.Convert.*;
+import static org.web3j.utils.Convert.Unit.*;
 import static org.web3j.utils.Convert.Unit.ETHER;
 
 /**
@@ -24,42 +29,48 @@ import static org.web3j.utils.Convert.Unit.ETHER;
  */
 public class SendEther {
 
-    Web3j client;
+    private Web3j client;
 
-    Optional<Credentials> credentials;
+    String pathToWallet;
 
-    @Autowired
-    public SendEther(Web3j client,
-                     @Value("${ethereum.wallet.dir}") String pathToWallet,
-                     @Value("${ethereum.wallet.password}") String walletPassword) {
-        Optional<Credentials> credentials = empty();
+    String walletPassword;
+
+    Optional<Credentials> credentials = empty();
+
+    public SendEther(Web3j client, String pathToWallet, String walletPassword) {
+        this.client = client;
+        this.pathToWallet = pathToWallet;
+        this.walletPassword = walletPassword;
+    }
+
+    public void sendSomeEther(String toAddress){
         try {
+            System.out.println("Making payment...");
             credentials = Optional.of(WalletUtils.loadCredentials(walletPassword, pathToWallet));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CipherException e) {
             e.printStackTrace();
         }
-    }
-
-    @PostConstruct
-    public void sendSomeEther(String toAddress){
-        Double amount = new Double(0.001);
-        Optional<TransactionReceipt> maybeSentEther = sendEther(amount, "0x1e87ba20e81df142b2f93e0e6c5992d677572fec");
+        BigDecimal amount = new BigDecimal(1, new MathContext(8, RoundingMode.HALF_UP));
+        Optional<TransactionReceipt> maybeSentEther = makePayment(amount, toAddress);
         if (!maybeSentEther.isPresent()) {
-            System.out.println("God Dammit! Sending ether to '0x1e87ba20e81df142b2f93e0e6c5992d677572fec' did not work!");
+            System.out.println("Sending ether to '" + toAddress + "' FAILED!");
         }
     }
 
-    public Optional<TransactionReceipt> sendEther(Double amount, String toAddress) {
+    public Optional<TransactionReceipt> makePayment(BigDecimal amount, String toAddress) {
         if (credentials.isPresent()) {
             try {
-                Optional<TransactionReceipt> transactionReceipt = Optional.of(sendFundsAsync(
-                        client,
-                        credentials.get(),
-                        toAddress,
-                        BigDecimal.valueOf(amount),
-                        ETHER).get());
+                TransactionManager tm = new RawTransactionManager(client, credentials.get());
+
+                Transfer transfer = new Transfer(client, tm);
+
+                Optional<TransactionReceipt> transactionReceipt = Optional.of(transfer.sendFundsAsync(toAddress,
+                        amount,
+                        ETHER,
+                        GAS_PRICE,
+                        GAS_LIMIT).get());
 
                 if (transactionReceipt.isPresent()) {
                     System.out.println("Funds transfer completed..." + transactionReceipt.get().getBlockHash());
@@ -67,12 +78,9 @@ public class SendEther {
                 } else {
                     System.out.println("Sorry your transfer failed.");
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TransactionTimeoutException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                System.out.println("God DAMMIT! " + e.getCause());
+//                e.printStackTrace();
             }
         }
         return empty();
