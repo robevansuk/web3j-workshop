@@ -5,13 +5,12 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.exceptions.TransactionTimeoutException;
-import org.web3j.tx.*;
-import org.web3j.utils.Convert;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -19,9 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.Optional.empty;
 import static org.web3j.tx.Contract.GAS_LIMIT;
-import static org.web3j.tx.ManagedTransaction.*;
-import static org.web3j.utils.Convert.*;
-import static org.web3j.utils.Convert.Unit.*;
+import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 import static org.web3j.utils.Convert.Unit.ETHER;
 
 /**
@@ -80,7 +77,6 @@ public class SendEther {
                 }
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println("God DAMMIT! " + e.getCause());
-//                e.printStackTrace();
             }
         }
         return empty();
