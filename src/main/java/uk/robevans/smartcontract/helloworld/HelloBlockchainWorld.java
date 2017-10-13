@@ -36,7 +36,9 @@ public class HelloBlockchainWorld {
                         BigInteger.ONE,
                         new Utf8String("Hello blockchain world!")).get();
             } catch (ExecutionException ex) {
-                if (ex.getCause().getMessage().contains())
+                if (ex.getCause().getMessage().contains("")) {
+                    // TODO Get the contract ID and try to obtain a reference to it ready for the next steps.
+                }
             }
 
             Utf8String greeting = contract.greet().get();

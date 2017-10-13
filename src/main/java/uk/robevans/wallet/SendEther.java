@@ -41,28 +41,38 @@ public class SendEther {
         }
     }
 
+    /**
+     * Only uncomment this code if you want to continuously send ether to the defined address. Otherwise
+     * leave it commented out or you'll need to get more Ether from the Faucet:
+     *
+     *
+     *
+     * @param amount
+     * @param toAddress
+     * @return
+     */
     public Optional<TransactionReceipt> makePayment(BigDecimal amount, String toAddress) {
-        if (credentials != null) {
-            try {
-                TransactionManager tm = new RawTransactionManager(client, credentials);
-
-                Transfer transfer = new Transfer(client, tm);
-
-                Optional<TransactionReceipt> transactionReceipt = Optional.of(transfer.sendFundsAsync(toAddress,
-                        amount,
-                        ETHER,
-                        GAS_PRICE,
-                        GAS_LIMIT).get());
-
-                if (transactionReceipt.isPresent()) {
-                    System.out.println("Funds transfer completed..." + transactionReceipt.get().getBlockHash());
-                    return transactionReceipt;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                System.out.println("God DAMMIT! " + e.getCause());
-            }
-        }
-        System.out.println("Transaction failed but no exception thrown???");
+//        if (credentials != null) {
+//            try {
+//                TransactionManager tm = new RawTransactionManager(client, credentials);
+//
+//                Transfer transfer = new Transfer(client, tm);
+//
+//                Optional<TransactionReceipt> transactionReceipt = Optional.of(transfer.sendFundsAsync(toAddress,
+//                        amount,
+//                        ETHER,
+//                        GAS_PRICE,
+//                        GAS_LIMIT).get());
+//
+//                if (transactionReceipt.isPresent()) {
+//                    System.out.println("Funds transfer completed..." + transactionReceipt.get().getBlockHash());
+//                    return transactionReceipt;
+//                }
+//            } catch (InterruptedException | ExecutionException e) {
+//                System.out.println("God DAMMIT! " + e.getCause());
+//            }
+//        }
+//        System.out.println("Transaction failed but no exception thrown???");
         return empty();
     }
 }

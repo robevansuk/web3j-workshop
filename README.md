@@ -8,13 +8,11 @@ Smart contracts are programs that are executed on the Ethereum blockchain.
 
 Prerequisites:
  
- install a geth client
- connect to the Ethereum network (Rinkeby, etc.)
- you will want to install the web3j command line tools
- you will need a wallet on the corresponding network
- Solidity should be installed locally as the commands will be compiled and executed as EVM bytecode
- Web3j command line tools
- 
+ - install a geth client
+ - connect to the Ethereum network (Rinkeby, Kovan, testnet, etc.) - see geth command in the setup section
+ - Web3j command line tools
+ - you will need a wallet on the test network (at the moment a wallet on the test network works on all test networks not just the one you were connected to when it was created)
+ - Solidity should be installed locally as the commands will be compiled and executed as EVM bytecode
  
 ABI files are application binary interfaces... these are the bindings for the various inputs/outputs/method declarations.
 You will get a .bin binary file for anything you compile using Solidity.
@@ -26,7 +24,19 @@ You'll need to have the Solidity compiler installed for your system and executab
 Run geth:
 ```./geth --rpcapi personal,db,eth,net,web3 --rpc --rinkeby```
 
+You'll need a wallet address. Using the web3j command line tools you can create a wallet with:
+
+```web3j wallet create``` 
+
+Follow the instructions and you'll end up with a wallet file on your machine which contains the wallet address and private keys in encrypted format. Get the address from the file and update the `application.properties` file in this application with the address, the password to your wallet (used locally only) and the file path to your wallet file (a `.json` file)
+
+Now you'll want some ether to run the next few steps - all computation on the Ethereum Virtual Machine needs to be paid for. To pay for it you use "Ether" - analagous to 'gas' for your car. You can't get very far without it.
+Go to http://gist.github.com and set up a gist with your wallet address as the content... as per: https://gist.github.com/robevansuk/58a5da2e6a7641ad7add019dcac696a6
  
+Go to https://faucet.rinkeby.io/ and paste in the gist URL. You can then select a set amount of Ether you want deposited to your digital wallet.
+
+You should be ready to go now.
+
 # Compiling using solidity compiler
  
 Within `src/main/resources/solidity` you will find smart contracts.
