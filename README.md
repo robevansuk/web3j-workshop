@@ -39,7 +39,9 @@ To compile the Greeter.sol smart contract, ready to deploy it to the Ethereum ne
 
 The 2 smart contracts defined within the Greeter.sol definition file should be output as 2 .abi and .bin files each - so 4 files in total - in the build/ directory.
 
-Next you'll want to test them on the Ethereum network - you first need to wrap them in a special Web3j wrapper which will parse the contract bytecode into a Java String which in tern will be pushed to the network.
+Next you'll want to test them on the Ethereum network - you first need to wrap them in a special Web3j wrapper which will parse the contract bytecode into a Java String which, in turn, will be pushed/deployed to the network. This step takes a few minutes sometimes so be patient...
 
 ```web3j solidity generate build/greeter.bin build/greeter.abi -p org.web3j.example.generated -o src/main/java/```
+
+
 
