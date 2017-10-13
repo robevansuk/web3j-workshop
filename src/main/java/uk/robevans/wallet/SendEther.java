@@ -1,15 +1,12 @@
 package uk.robevans.wallet;
 
-import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.Transfer;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -26,29 +23,17 @@ import static org.web3j.utils.Convert.Unit.ETHER;
  */
 public class SendEther {
 
-    private Web3j client;
+    private final Web3j client;
+    private final Credentials credentials;
 
-    String pathToWallet;
-
-    String walletPassword;
-
-    Optional<Credentials> credentials = empty();
-
-    public SendEther(Web3j client, String pathToWallet, String walletPassword) {
+    public SendEther(Web3j client, Credentials credentials) {
         this.client = client;
-        this.pathToWallet = pathToWallet;
-        this.walletPassword = walletPassword;
+        this.credentials = credentials;
     }
 
     public void sendSomeEther(String toAddress){
-        try {
-            System.out.println("Making payment...");
-            credentials = Optional.of(WalletUtils.loadCredentials(walletPassword, pathToWallet));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CipherException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Making payment...");
+
         BigDecimal amount = new BigDecimal(1, new MathContext(8, RoundingMode.HALF_UP));
         Optional<TransactionReceipt> maybeSentEther = makePayment(amount, toAddress);
         if (!maybeSentEther.isPresent()) {
@@ -57,9 +42,9 @@ public class SendEther {
     }
 
     public Optional<TransactionReceipt> makePayment(BigDecimal amount, String toAddress) {
-        if (credentials.isPresent()) {
+        if (credentials != null) {
             try {
-                TransactionManager tm = new RawTransactionManager(client, credentials.get());
+                TransactionManager tm = new RawTransactionManager(client, credentials);
 
                 Transfer transfer = new Transfer(client, tm);
 
@@ -72,13 +57,12 @@ public class SendEther {
                 if (transactionReceipt.isPresent()) {
                     System.out.println("Funds transfer completed..." + transactionReceipt.get().getBlockHash());
                     return transactionReceipt;
-                } else {
-                    System.out.println("Sorry your transfer failed.");
                 }
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println("God DAMMIT! " + e.getCause());
             }
         }
+        System.out.println("Transaction failed but no exception thrown???");
         return empty();
     }
 }
