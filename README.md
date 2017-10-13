@@ -13,10 +13,19 @@ Prerequisites:
  you will want to install the web3j command line tools
  you will need a wallet on the corresponding network
  Solidity should be installed locally as the commands will be compiled and executed as EVM bytecode
+ Web3j command line tools
  
  
 ABI files are application binary interfaces... these are the bindings for the various inputs/outputs/method declarations.
 You will get a .bin binary file for anything you compile using Solidity.
+
+# Setup
+
+You'll need to have the Solidity compiler installed for your system and executable from the command line.
+
+Run geth:
+```./geth --rpcapi personal,db,eth,net,web3 --rpc --rinkeby```
+
  
 # Compiling using solidity compiler
  
@@ -37,9 +46,9 @@ To compile the Greeter.sol smart contract, ready to deploy it to the Ethereum ne
 
 ```solc -o build/ --abi --bin --optimize src/main/resources/solidity/Greeter.sol```
 
-The 2 smart contracts defined within the Greeter.sol definition file should be output as 2 .abi and .bin files each - so 4 files in total - in the build/ directory.
+The 2 smart contracts defined within the `Greeter.sol` definition file should be output as 2 `.abi` and `.bin` files each - so 4 files in total - in the `build/` directory.
 
-Next you'll want to test them on the Ethereum network - you first need to wrap them in a special Web3j wrapper which will parse the contract bytecode into a Java String which, in turn, will be pushed/deployed to the network. This step takes a few minutes sometimes so be patient...
+Next you'll want to test them on the Ethereum test network, of which there are many. I've used the "Rinkeby" network (network id 4 - see `version.ClientVersion`)- you first need to wrap them in a special Web3j wrapper which will parse the contract bytecode into a Java String which, in turn, will be pushed/deployed to the network. This step takes a few minutes sometimes so be patient...
 
 ```web3j solidity generate build/greeter.bin build/greeter.abi -p org.web3j.example.generated -o src/main/java/```
 
